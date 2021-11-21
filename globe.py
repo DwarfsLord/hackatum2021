@@ -59,7 +59,16 @@ class Globe(ShowBase):
         self.altitude_slider = DirectSlider(range=(0,5), pageSize = 1, pos=Point3(-1.4, 0, 0.85), scale=0.3, command=self.recalculate)
 
         self.information_count = DirectLabel(text_bg=(0,0,0,1), text_fg=(1,1,1,1), text = "Aha", pos=Point3(-1.35, 0, -0.7), scale=0.09)
+
+        self.rotation_chkbox = DirectCheckButton(text_bg=(0,0,0,1), text_fg=(1,1,1,1), text = "Rotation", pos=Point3(-1.35, 0, -0.55), scale=0.09, indicatorValue = 1, command=self.recalculate_rot)
         
+
+    def recalculate_rot(self,a):
+        if self.rotation_chkbox['indicatorValue']:
+            self.satelite_rotation.loop(0,1,1/self.satellite_t)
+        else:
+            self.satelite_rotation.finish()
+
 
     def recalculate(self):
         self.altitude = 2**self.altitude_slider['value']
@@ -78,7 +87,10 @@ class Globe(ShowBase):
         self.information_count['text'] = f"Total Satellites: {self.sector_equator_count * self.sector_belt_count/2:.0f}"
 
         self.get_orbital_period()
-        self.satelite_rotation.loop(0,1,1/self.satellite_t)
+        if self.rotation_chkbox['indicatorValue']:
+            self.satelite_rotation.loop(0,1,1/self.satellite_t)
+        else:
+            self.satelite_rotation.finish()
 
         self.instantiate_satellites()
         self.instantiate_belts()
@@ -120,12 +132,15 @@ class Globe(ShowBase):
         self.satellite_t = 2* pi * (re + self.altitude * 10**6) / (vorb*1440)
 
     def spinCameraTask(self, task):
-        angleDegrees = task.time *-6.0
-        angleRadians = angleDegrees *(pi/180)
+        if self.rotation_chkbox['indicatorValue']:
+            self.angleDegrees = task.time *-6.0
+        
+        self.angleRadians = self.angleDegrees *(pi/180)
         z_deg = self.elevation_slider['value']
         z_rad = z_deg * (pi/180)
-        self.camera.setPos(self.distance*sin(angleRadians)*cos(z_rad), -1*self.distance*cos(angleRadians)*cos(z_rad), self.distance*sin(z_rad))
-        self.camera.setHpr(angleDegrees,-1*z_deg,0)
+        self.camera.setPos(self.distance*sin(self.angleRadians)*cos(z_rad), -1*self.distance*cos(self.angleRadians)*cos(z_rad), self.distance*sin(z_rad))
+        self.camera.setHpr(self.angleDegrees,-1*z_deg,0)
+
         return Task.cont
 
 
