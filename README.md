@@ -1,4 +1,4 @@
-# hackatum2021: Orbits and Planes
+# hackaTUM2021: Orbits and Planes
 
 To run the repo, you need python and panda3d.
 
