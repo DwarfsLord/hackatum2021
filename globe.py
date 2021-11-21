@@ -79,7 +79,7 @@ class Globe(ShowBase):
         self.instantiate_satellites()
         self.instantiate_belts()
 
-        self.draw_sectors()
+        # self.draw_sectors()
 
 
     def instantiate_satellites(self):
