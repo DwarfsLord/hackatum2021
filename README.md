@@ -4,7 +4,7 @@ To run the repo, you need python and panda3d.
 
 You can easily install panda3d by using pip ```pip install panda3d```
 
-then run ```python globe.py```
+Then run ```python globe.py```
 
 
 Enjoy!
